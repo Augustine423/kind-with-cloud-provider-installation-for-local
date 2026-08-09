@@ -1,0 +1,59 @@
+WINDOWS GUIDE — kind + cloud-provider-kind
+==========================================
+
+WHAT YOU GET
+  Local Kubernetes (kind)
+  LoadBalancer via cloud-provider-kind (localhost)
+
+RUN
+  Double-click START-HERE.bat
+
+FIRST TIME
+  [1] Check & install prerequisites
+      - Checks: Windows, disk, RAM, virtualization
+      - Installs if missing (winget):
+        Docker Desktop, kind, kubectl
+      - Verifies Docker Compose (with Desktop)
+  [2] Create cluster + cloud-provider-kind
+      - Cluster name: local (Enter)
+      - Workers: 0 (Enter)
+      - Start cloud-provider-kind: Y
+      - Deploy test nginx: Y
+  Open: http://127.0.0.1
+
+AFTER REBOOT
+  1. Open Docker Desktop (wait Engine running)
+  2. START-HERE.bat → [3]
+
+DAILY
+  [5] Status
+  [4] Deploy another nginx LoadBalancer demo
+  [6] Stop only cloud-provider-kind
+
+REMOVE
+  [7] Cluster only (images kept — fast reinstall with [2])
+  [8] Everything including images (type YES)
+
+OWN APP
+  kubectl create deployment myapp --image=nginx:latest
+  kubectl expose deployment myapp --port=80 --type=LoadBalancer
+  kubectl get svc
+  docker ps --filter name=kindccm
+
+EXAMPLES
+  kubectl apply -f example/nginx-loadbalancer.yaml
+  kubectl apply -f example/ingress-demo.yaml
+
+INGRESS HOSTNAME (demo.local)
+  1. kubectl apply -f example/ingress-demo.yaml
+  2. Edit as Admin: C:\Windows\System32\drivers\etc\hosts
+     Add:  127.0.0.1  demo.local
+  3. Browser: http://demo.local
+     (or http://demo.local:PORT from docker ps --filter name=kindccm)
+  See README.md for full steps.
+
+TROUBLE
+  Docker not running     → open Docker Desktop
+  Tools missing after winget → close/reopen START-HERE.bat
+  LB pending             → [3] Start services
+  Browser timeout        → docker ps --filter name=kindccm (check PORTS)

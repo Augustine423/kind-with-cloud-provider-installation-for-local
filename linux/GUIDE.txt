@@ -1,0 +1,60 @@
+LINUX GUIDE — kind + cloud-provider-kind
+========================================
+
+WHAT YOU GET
+  Local Kubernetes (kind)
+  LoadBalancer via cloud-provider-kind (localhost)
+
+RUN
+  chmod +x START-HERE.sh
+  ./START-HERE.sh
+
+FIRST TIME
+  [1] Check & install prerequisites
+      - Checks: arch, disk, RAM
+      - Installs if missing:
+        Docker Engine, Docker Compose plugin, kind, kubectl
+  [2] Create cluster + cloud-provider-kind
+      - Cluster name: local (Enter)
+      - Workers: 0 (Enter)
+      - Start cloud-provider-kind: Y
+      - Deploy test nginx: Y
+  Open: http://127.0.0.1
+
+AFTER REBOOT
+  sudo systemctl start docker
+  ./START-HERE.sh → [3]
+
+DAILY
+  [5] Status
+  [4] Deploy another nginx LoadBalancer demo
+  [6] Stop only cloud-provider-kind
+
+REMOVE
+  [7] Cluster only (images kept — fast reinstall with [2])
+  [8] Everything including images (type YES)
+
+OWN APP
+  kubectl create deployment myapp --image=nginx:latest
+  kubectl expose deployment myapp --port=80 --type=LoadBalancer
+  kubectl get svc
+  docker ps --filter name=kindccm
+
+EXAMPLES
+  kubectl apply -f example/nginx-loadbalancer.yaml
+  kubectl apply -f example/ingress-demo.yaml
+
+INGRESS HOSTNAME (demo.local)
+  1. kubectl apply -f example/ingress-demo.yaml
+  2. Add to /etc/hosts:
+       echo "127.0.0.1  demo.local" | sudo tee -a /etc/hosts
+  3. Browser: http://demo.local
+     (or http://demo.local:PORT from docker ps --filter name=kindccm)
+  See README.md for full steps.
+
+TROUBLE
+  Docker not running     → sudo systemctl start docker
+  Permission denied      → sudo usermod -aG docker $USER
+                           then: newgrp docker  (or re-login)
+  LB pending             → [3] Start services
+  Browser timeout        → docker ps --filter name=kindccm (check PORTS)

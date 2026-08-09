@@ -1,0 +1,6 @@
+# Auto-generated during install (may differ per machine)
+kind-config.yaml
+
+# Local kubeconfig backups (never commit credentials)
+.kube/
+*.log
